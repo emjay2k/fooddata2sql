@@ -57,22 +57,22 @@ class Helper(object):
     @staticmethod
     def is_file(file_name):
         if not isfile(file_name):
-            raise ArgumentTypeError("{0} does not exist".format(file_name))
+            raise ArgumentTypeError('{0} does not exist'.format(file_name))
         else:
             return file_name
 
     @staticmethod
     def not_is_file(file_name):
         if isfile(file_name):
-            raise ArgumentTypeError("{0} already exists".format(file_name))
+            raise ArgumentTypeError('{0} already exists'.format(file_name))
         else:
             return file_name
 
     @staticmethod
     def is_readable_dir(dir_name):
         if not isdir(dir_name):
-            raise ArgumentTypeError("{0} is not a directory".format(dir_name))
+            raise ArgumentTypeError('{0} is not a directory'.format(dir_name))
         elif not access(dir_name, R_OK):
-            raise ArgumentTypeError("{0} is not readable".format(dir_name))
+            raise ArgumentTypeError('{0} is not readable'.format(dir_name))
         else:
             return dir_name

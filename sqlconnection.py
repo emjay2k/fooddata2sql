@@ -19,6 +19,15 @@ class SqlConnection(ABC):
     @abstractmethod
     def _open_db(self):
         pass
-    
+
     def query(self, query):
         return SqlHelper.execute_query(self.connection, query)
+
+    def queries(self, query_list, result_index):
+        result = None
+        for i in range(len(query_list)):
+            temp_result = self.query(query_list[i])
+            if i == result_index:
+                result = temp_result
+
+        return result

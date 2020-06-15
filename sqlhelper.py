@@ -69,7 +69,7 @@ class SqlHelper(object):
 
     @staticmethod
     def get_tablename(file):
-        return basename(file).split(".")[0]
+        return basename(file).split('.')[0]
 
     @staticmethod
     def sanitize_colname(colname):
