@@ -15,7 +15,7 @@ class DbType(Enum):
     '''
     Database type enum
     '''
-    
+
     NULL = 0
     BOOLEAN = 1
     INTEGER = 2
@@ -65,7 +65,7 @@ class SqlHelper(object):
         elif n_type == DbType.INTEGER or n_type == DbType.FLOAT:
             return '0' if len(n) == 0 else n
         else:  # text or date
-            return 'NULL' if len(n) == 0 else '\'' + n.replace('\'', '') + '\''
+            return 'NULL' if len(n) == 0 else '\'{0}\''.format(n.replace('\'', ''))
 
     @staticmethod
     def get_tablename(file):
@@ -87,11 +87,11 @@ class SqlHelper(object):
 
                 return True
         except Error as e:
-            Helper.print_error('SQL error: ' + str(e))
-            Helper.print_error('Statement was: ' + statement)
+            Helper.print_error('SQL error: {0}'.format(str(e)))
+            Helper.print_error('Statement was: {0}'.format(statement))
         except:
             Helper.print_error('SQL error')
-            Helper.print_error('Statement was: ' + statement)
+            Helper.print_error('Statement was: {0}'.format(statement))
 
             return False
 
@@ -103,35 +103,35 @@ class SqlHelper(object):
 
                 return cursor.fetchall()
         except Error as e:
-            Helper.print_error('SQL error: ' + str(e))
-            Helper.print_error('Query was: ' + query)
+            Helper.print_error('SQL error: {0}'.format(str(e)))
+            Helper.print_error('Query was: {0}'.format(query))
         except:
             Helper.print_error('SQL error')
-            Helper.print_error('Statement was: ' + query)
+            Helper.print_error('Statement was: {0}'.format(query))
 
             return None
 
     @staticmethod
     def sql_create_table(table_name, col_list, type_list, primary_key=-1):
-        sql_query = 'CREATE TABLE IF NOT EXISTS ' + table_name + ' ('
+        sql_query = 'CREATE TABLE IF NOT EXISTS {0} ('.format(table_name)
 
         for i in range(len(col_list) - 1):
-            sql_query += col_list[i] + ' ' + type_list[i].name
+            sql_query += '{0} {1}'.format(col_list[i], type_list[i].name)
             if i == primary_key:
                 sql_query += ' PRIMARY KEY'
             sql_query += ', '
 
         if len(col_list) > 0:
             i = len(col_list) - 1
-            sql_query += col_list[i] + ' ' + type_list[i].name + ');'
+            sql_query += '{0} {1});'.format(col_list[i], type_list[i].name)
 
         return sql_query
 
     @staticmethod
     def sql_insert_query(name, values):
-        sql_query = 'INSERT INTO ' + name + ' VALUES ('
+        sql_query = 'INSERT INTO {0} VALUES ('.format(name)
         for i in range(len(values) - 1):
-            sql_query += values[i] + ', '
-        sql_query += values[len(values) - 1] + ');'
+            sql_query += '{0}, '.format(values[i])
+        sql_query += '{0});'.format(values[len(values) - 1])
 
         return sql_query

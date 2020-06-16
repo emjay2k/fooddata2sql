@@ -11,11 +11,11 @@ import random
 from sqliteconnection import SqliteConnection
 from helper import Helper
 
-
 sql_query_food_descr_by_fdcid = 'SELECT description FROM food where fdc_id = {0};'
 sql_query_food_descr_search = 'SELECT fdc_id,description FROM food where description LIKE \'%{0}%\';'
 sql_query_food_descr_search_exact = 'SELECT fdc_id,description FROM food where description = \'{0}\';'
 sql_script_nutrition_list_for_fdcid = [ 'CREATE TEMPORARY TABLE table_{0} AS SELECT nutrient_id, amount FROM food_nutrient WHERE fdc_id = {1};', 'SELECT b.name, a.amount, b.unit_name FROM table_{0} AS a INNER JOIN nutrient AS b ON a.nutrient_id = b.id ORDER BY b.rank;', 'DROP TABLE IF EXISTS table_{0};' ]
+
 
 def _get_args():
     parser = argparse.ArgumentParser()

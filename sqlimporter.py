@@ -22,9 +22,9 @@ class SqlImporter(ABC):
     def _open_db(self):
         pass
 
-    def import_file(self, file):
+    def import_file(self, file, indices):
         if self._open_db():
-            result = self._create_table(file)
+            result = self._create_table(file, indices)
             SqlImporter._print_import_result(result, file)
 
             self.count[0] += result[0]
@@ -36,12 +36,17 @@ class SqlImporter(ABC):
     def print_total_result(self):
         print('import summary')
         print('added:')
-        print('- tables        : ' + str(self.count[0]))
-        print('- primary keys  : ' + str(self.count[2]))
-        print('- data rows     : ' + str(self.count[1]))
+        print('- tables        : {0}'.format(self.count[0]))
+        print('- primary keys  : {0}'.format(self.count[2]))
+        print('- data rows     : {0}'.format(self.count[1]))
 
     def _set_primarykey(self, table_name, primary_key, col_list=[], type_list=[]):
-        sql_stm = 'ALTER TABLE ' + table_name + ' ADD PRIMARY KEY (' + primary_key + ');'
+        sql_stm = 'ALTER TABLE {0} ADD PRIMARY KEY ({1});'.format(table_name, primary_key)
+
+        return SqlHelper.execute_statement(self.connection, sql_stm)
+
+    def _set_index(self, table_name, index, col_list=[], type_list=[]):
+        sql_stm = 'CREATE INDEX {0}_{1}_idx ON {0}({1});'.format(table_name, col_list[index])
 
         return SqlHelper.execute_statement(self.connection, sql_stm)
 
@@ -70,11 +75,11 @@ class SqlImporter(ABC):
                     result += int(success == True)
 
                 else:
-                    print('ignoring unexpected row: ' + row)
+                    print('ignoring unexpected row: {0}'.format(row))
 
         return result
 
-    def _create_table(self, file):
+    def _create_table(self, file, indices):
         table_name = SqlHelper.get_tablename(file)
 
         result_create = 0
@@ -97,6 +102,7 @@ class SqlImporter(ABC):
             self.connection.commit()
 
             # attempt to set primary key in first integer-type column
+            primary_key = -1
             for i in range(len(type_list)):
                 t = type_list[i]
                 if t == DbType.INTEGER:
@@ -104,7 +110,15 @@ class SqlImporter(ABC):
                     self.connection.commit()
                     if success:
                         result_key = 1
+                        primary_key = i
                     break
+
+            # set indices on _id named columns if specified
+            if indices:
+                for i in range(len(type_list)):
+                    t = type_list[i]
+                    if i != primary_key and t == DbType.INTEGER and (name_list[i] == 'id' or '_id_' in name_list[i] or name_list[i].endswith('_id')):
+                        self._set_index(table_name, i, name_list, type_list)
 
         return result_create, result_data, result_key
 

@@ -45,7 +45,7 @@ class Helper(object):
             return False
         else:
             return float(n).is_integer()
-    
+
     @staticmethod
     def is_date(n, fmt):
         try:

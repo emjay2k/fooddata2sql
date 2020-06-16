@@ -25,8 +25,8 @@ class SqliteImporter(SqlImporter):
             self.connection = sqlite3.connect(self.db_file)
             return True
         except Error as e:
-            Helper.print_error('SQL error: ' + str(e))
-            Helper.print_error('database was: ' + self.db_file)
+            Helper.print_error('SQL error: {0}'.format(str(e)))
+            Helper.print_error('database was: {0}'.format(self.db_file))
 
         return False
 
@@ -40,13 +40,13 @@ class SqliteImporter(SqlImporter):
         sql_stm = 'BEGIN TRANSACTION;'
         SqlHelper.execute_statement(self.connection, sql_stm)
 
-        sql_stm = 'ALTER TABLE ' + table_name + ' RENAME TO temp_table;'
+        sql_stm = 'ALTER TABLE {0} RENAME TO temp_table;'.format(table_name)
         SqlHelper.execute_statement(self.connection, sql_stm)
 
         sql_stm = SqlHelper.sql_create_table(table_name, col_list, type_list, primary_key)
         SqlHelper.execute_statement(self.connection, sql_stm)
 
-        sql_stm = 'INSERT INTO ' + table_name + ' SELECT * FROM temp_table;'
+        sql_stm = 'INSERT INTO {0} SELECT * FROM temp_table;'.format(table_name)
         success = SqlHelper.execute_statement(self.connection, sql_stm)
 
         sql_stm = 'DROP TABLE temp_table;'
