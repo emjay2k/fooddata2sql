@@ -4,6 +4,7 @@ Created on Jun 13, 2020
 @author: Matthias Jung
 '''
 
+import random
 from enum import Enum
 from contextlib import closing
 from os.path import basename
@@ -66,6 +67,10 @@ class SqlHelper(object):
             return '0' if len(n) == 0 else n
         else:  # text or date
             return 'NULL' if len(n) == 0 else '\'{0}\''.format(n.replace('\'', ''))
+
+    @staticmethod
+    def _get_rand_tableno():
+        return random.randint(0, 65535)
 
     @staticmethod
     def get_tablename(file):

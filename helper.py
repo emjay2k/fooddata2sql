@@ -27,6 +27,23 @@ class Helper(object):
         print(*args, file=stderr, **kwargs)
 
     @staticmethod
+    def print_list(data):
+        for row in data:
+            print(row)
+
+    @staticmethod
+    def _get_first_element(list_list):
+        return list_list[0][0] if list_list and len(list_list[0]) > 0 else None
+
+    @staticmethod
+    def _get_pair_list(list_list):
+        result = []
+        for p in list_list:
+            result.append((p[0], p[1]))
+
+        return result
+
+    @staticmethod
     def is_boolean(n):
         nl = n.lower()
         return nl == 'y' or nl == 'n' or nl == '0' or nl == '1' or nl == 'true' or nl == 'false'
