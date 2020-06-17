@@ -36,7 +36,7 @@ The program syntax is pretty self-explanatory, just run it like so
 
     ./usdafood2sql.py -i INPUT -o OUTPUT
 
-Just give the directory to the CSV files you obtained as INPUT and the desired sqlite3 filename for output. There are also some example queries available in usdafoodsearch.py for usage demonstration. If you have to export to some database server, you will need to install the proper driver and tinker with the code a bit (see commented parts in usdafood2sql.py). I haven't tested it at all in such a scenario, so some bugfixing may be required.
+Just give the directory to the CSV files you obtained as INPUT and the desired sqlite3 filename for output. Use the "-k" flag in case you also wish to have some indices auto-generated for columns that are either named "id", end with "_id" or have "_id_" somewhere in their name. This helps speedup a lot of queries to the database at the cost of slightly bigger output files. There are also some example queries available in usdafoodsearch.py for usage demonstration. If you have to export to some database server, you will need to install the proper driver and tinker with the code a bit (see commented parts in usdafood2sql.py). I haven't tested it at all in such a scenario, so some bugfixing may be required.
 
 ## Performance
 This program is a thing that in most scenarios will only run once, so it is not optimized for performance. It will take a while so just be patient. To give you an estimation what to expect, here the execution times on a moderately fast 2018 PC (measured using the Linux *time* command):

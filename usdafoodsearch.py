@@ -3,7 +3,7 @@
 '''
 Created on Jun 13, 2020
 
-@author: matthias
+@author: Matthias Jung
 
 Some example queries for demonstration purposes
 '''
@@ -12,7 +12,6 @@ import argparse
 from sqliteconnection import SqliteConnection
 from helper import Helper
 from sqlhelper import SqlHelper
-from samba.samba3.libsmb_samba_internal import Conn
 
 sql_query_food_descr_by_fdcid = 'SELECT description FROM food where fdc_id = {0};'
 sql_query_food_descr_search = 'SELECT fdc_id,description FROM food where description LIKE \'%{0}%\';'
