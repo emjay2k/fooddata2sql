@@ -16,6 +16,7 @@ from sqlhelper import SqlHelper
 sql_query_food_descr_by_fdcid = 'SELECT description FROM food where fdc_id = {0};'
 sql_query_food_descr_search = 'SELECT fdc_id,description FROM food where description LIKE \'%{0}%\';'
 sql_query_food_descr_search_exact = 'SELECT fdc_id,description FROM food where description = \'{0}\';'
+sql_script_food_descr_nutrient = [ 'CREATE TEMPORARY TABLE table_{0} AS SELECT fdc_id, amount FROM food_nutrient WHERE nutrient_id = (SELECT id FROM nutrient WHERE name = \'{1}\');', 'SELECT b.fdc_id, b.description, a.amount FROM table_{0} AS a INNER JOIN food AS b ON a.fdc_id = b.fdc_id WHERE description LIKE \'%{2}%\' ORDER BY a.amount {3};', 'DROP TABLE IF EXISTS table_{0};' ]
 sql_script_nutrition_list_for_fdcid = [ 'CREATE TEMPORARY TABLE table_{0} AS SELECT nutrient_id, amount FROM food_nutrient WHERE fdc_id = {1};', 'SELECT b.name, a.amount, b.unit_name FROM table_{0} AS a INNER JOIN nutrient AS b ON a.nutrient_id = b.id ORDER BY b.rank;', 'DROP TABLE IF EXISTS table_{0};' ]
 
 
@@ -36,6 +37,7 @@ def _get_args():
     parser.add_argument('-e', '--exact', help='will search for the exact string', action='store_true')
     parser.add_argument('-i', '--id', help='lookup food for given id', action='store_true')
     parser.add_argument('-n', '--nutrients', help='lookup nutrients for given id', action='store_true')
+    parser.add_argument('-d', '--data', help='lookup food for given nutrient')
     parser.add_argument('keyword', help='keyword or id')
 
     args = parser.parse_args()
@@ -79,11 +81,23 @@ def _search_nutrients_by_fdcid(connection, fdc_id):
     return _get_nutrient_list(connection.queries(script, result_index))
 
 
+def _search_foods_by_nutrient(connection, nutrient, food_name):
+    script = []
+    rand_id = SqlHelper._get_rand_tableno()
+    for l in sql_script_food_descr_nutrient:
+        script.append(l.format(rand_id, nutrient, food_name, 'ASC'))
+    result_index = 1
+
+    return connection.queries(script, result_index)
+
+
 def _search_food_sql(connection, args):
     if args.id:
         print(_search_food_by_id(connection, args.keyword))
     elif args.exact:
         print(_search_food_by_name(connection, args.keyword))
+    elif args.data:
+        Helper.print_list(_search_foods_by_nutrient(connection, args.data, args.keyword))
     else:
         Helper.print_list(_search_food_by_name_like(connection, args.keyword))
 
